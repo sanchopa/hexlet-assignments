@@ -26,13 +26,6 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping("/tasks")
 public class TasksController {
-    /*
-        GET /tasks – просмотр списка всех задач
-        GET /tasks/{id} – просмотр конкретной задачи
-        POST /tasks – создание новой задачи
-        PUT /tasks/{id} – редактирование задачи. При редактировании мы должны иметь возможность поменять название, описание задачи и ответственного разработчика
-        DELETE /tasks/{id} – удаление задачи
-     */
 
     @Autowired
     private TaskRepository taskRepository;
@@ -70,8 +63,10 @@ public class TasksController {
     public TaskDTO update(@PathVariable long id, @RequestBody @Valid TaskUpdateDTO taskData) {
         var task = taskRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Not Found"));
+        var assignee = task.getAssignee();
+        assignee.removeTask(task);
         taskMapper.update(taskData, task);
-        User assignee = task.getAssignee();
+        assignee = task.getAssignee();
         task.setAssignee(assignee);
         taskRepository.save(task);
         return taskMapper.map(task);
