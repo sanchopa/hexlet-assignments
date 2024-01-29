@@ -44,7 +44,7 @@ public class ProductsController {
         var spec = specBuilder.build(params);
         var product = productRepository.findAll(spec, PageRequest.of(page-1, 10));
 
-        return product.map(productMapper::map).stream().toList();
+        return product.map(productMapper::map).toList();
     }
 
     @PostMapping("")
